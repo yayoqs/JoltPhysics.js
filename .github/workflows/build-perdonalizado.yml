@@ -39,7 +39,7 @@ jobs:
             echo "ERROR: GetData encontrado en jolt.idl";
             cat jolt.idl;
             exit 1;
-          fi
+          fi 
           python3 /emsdk/upstream/emscripten/tools/webidl_binder.py jolt.idl glue
           sed -i.bak -e "s:thread_local::g" glue.cpp 2>/dev/null || true
 
