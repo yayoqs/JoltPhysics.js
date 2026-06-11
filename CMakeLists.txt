@@ -135,7 +135,7 @@ set(EMCC_ARGS
   -fno-exceptions
   --extern-pre-js ${JOLT_FRONT_MATTER_FILE}
   --post-js glue.js
-  --closure=1
+  --closure=0
   --closure-args="--dynamic_import_alias=replace_by_import"
   --closure-args="--externs"
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
