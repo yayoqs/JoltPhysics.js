@@ -8,13 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: emscripten/emsdk:latest
     steps:
       - name: Checkout código con submódulos
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Construir con Docker
+      - name: Construir con Docker (dentro del contenedor Emscripten)
         run: |
           chmod +x build.sh
           ./build.sh
