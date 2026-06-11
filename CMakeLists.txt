@@ -141,6 +141,7 @@ set(EMCC_ARGS
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
   ${MULTI_THREADED_FLAG}
   --post-js ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js
+  --post-js ${CMAKE_CURRENT_SOURCE_DIR}/keep-alive.js
   ${MEMORY_GROWTH_FLAG}
   -s ALLOW_TABLE_GROWTH=1
   -s WASM_BIGINT=0
