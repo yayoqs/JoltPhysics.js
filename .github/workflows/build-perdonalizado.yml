@@ -14,7 +14,7 @@ jobs:
       - name: Checkout código con submódulos
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: recursive 
 
       - name: Construir con Docker (dentro del contenedor Emscripten)
         run: |
