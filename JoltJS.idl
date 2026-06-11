@@ -3,7 +3,7 @@
 
 interface JPHString {
 	void JPHString(DOMString str, long length);
-	[Const] DOMString c_str(); // TODO: This is not a nice way to get a string from an interface
+	[Const] DOMString c_str(); // TODO: This is not a nice way to get a string from an interface.
 	unsigned long size();
 };
 
