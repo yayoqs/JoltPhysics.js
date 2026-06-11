@@ -1654,7 +1654,7 @@ interface PathConstraintPath {
 };
 
 interface PathConstraintPathHermite {
-  void PathConstraintPathHermite();
+  [Const] void PathConstraintPathHermite();
 	void AddPoint([Const, Ref] Vec3 inPosition, [Const, Ref] Vec3 inTangent, [Const, Ref] Vec3 inNormal);
 };
 
