@@ -16,12 +16,34 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Limpiar caché de build (forzar regeneración)
+      - name: Limpiar caché de build (total)
         run: |
           rm -rf Build/
-          rm -f glue.cpp glue.js jolt.idl
+          rm -f glue.cpp glue.js jolt.idl JoltJS.idl_backup
+          find . -name "jolt.idl" -delete
 
-      - name: Construir con Docker (dentro del contenedor Emscripten)
+      - name: Diagnosticar si GetData está en el IDL
+        run: |
+          echo "===== Buscando GetData en JoltJS.idl ====="
+          grep -n "GetData" JoltJS.idl || echo "No encontrado en JoltJS.idl"
+          echo "===== Buscando en JoltJS-DebugRenderer.idl ====="
+          grep -n "GetData" JoltJS-DebugRenderer.idl || echo "No encontrado en JoltJS-DebugRenderer.idl"
+          echo "===== Concatenación de ambos ====="
+          cat JoltJS.idl JoltJS-DebugRenderer.idl > /tmp/test_jolt.idl 2>/dev/null
+          grep -n "GetData" /tmp/test_jolt.idl || echo "No encontrado en concatenación"
+
+      - name: Regenerar bindings explícitamente (verificación)
+        run: |
+          cat JoltJS.idl JoltJS-DebugRenderer.idl > jolt.idl
+          if grep -q "GetData" jolt.idl; then
+            echo "ERROR: GetData encontrado en jolt.idl";
+            cat jolt.idl;
+            exit 1;
+          fi
+          python3 /emsdk/upstream/emscripten/tools/webidl_binder.py jolt.idl glue
+          sed -i.bak -e "s:thread_local::g" glue.cpp 2>/dev/null || true
+
+      - name: Construir con Docker
         run: |
           chmod +x build.sh
           ./build.sh
