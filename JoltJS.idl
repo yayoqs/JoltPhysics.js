@@ -2052,7 +2052,6 @@ interface StateRecorderImpl {
 	void Clear();
 	void Rewind();
 	boolean	IsEqual([Ref] StateRecorderImpl inReference);
-    any GetData();
 };
 
 StateRecorderImpl implements StateRecorder;
