@@ -29,11 +29,17 @@
   // ── Ragdoll ───────────────────────────────────────
   if (Jolt.Ragdoll) {
     var rp = Jolt.Ragdoll.prototype;
-    rp.AddToPhysicsSystem;    // tanto la versión con 1 arg como con 2
+    rp.AddToPhysicsSystem;
     rp.IsActive;
     rp.SetGroupID;
     rp.GetRootTransform;
     rp.GetWorldSpaceBounds;
+  }
+
+  // ── RagdollSettings ───────────────────────────────
+  if (Jolt.RagdollSettings) {
+    Jolt.RagdollSettings.prototype.CreateRagdoll;
+    Jolt.RagdollSettings.prototype.Stabilize;
   }
 
   // ── PathConstraintSettings ────────────────────────
@@ -46,5 +52,14 @@
     Jolt.PathConstraintPathHermite.prototype;
   }
 
-  // ── Otras clases que queramos conservar en el futuro ──
+  // ── VehicleConstraint ─────────────────────────────
+  if (Jolt.VehicleConstraint) {
+    Jolt.VehicleConstraint.prototype;
+  }
+
+  // ── SoftBody ──────────────────────────────────────
+  if (Jolt.BodyInterface) {
+    Jolt.BodyInterface.prototype.CreateAndAddSoftBody;
+    Jolt.BodyInterface.prototype.CreateSoftBody;
+  }
 })();
