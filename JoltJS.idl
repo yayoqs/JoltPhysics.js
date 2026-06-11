@@ -2052,7 +2052,7 @@ interface StateRecorderImpl {
 	void Clear();
 	void Rewind();
 	boolean	IsEqual([Ref] StateRecorderImpl inReference);
-sequence<octet> GetData() const;
+    sequence<octet> GetData() const;
 };
 
 StateRecorderImpl implements StateRecorder;
