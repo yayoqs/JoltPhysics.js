@@ -1,0 +1,28 @@
+name: Build JoltPhysics.js Custom
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código con submódulos
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Construir con Docker
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Subir artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: jolt-physics-custom
+          path: |
+            dist/jolt-physics.wasm-compat.js
+            dist/jolt-physics.wasm-compat.wasm
