@@ -135,13 +135,12 @@ set(EMCC_ARGS
   -fno-exceptions
   --extern-pre-js ${JOLT_FRONT_MATTER_FILE}
   --post-js glue.js
-  --closure=0
+  --closure=1
   --closure-args="--dynamic_import_alias=replace_by_import"
   --closure-args="--externs"
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
   ${MULTI_THREADED_FLAG}
   --post-js ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js
-  --post-js ${CMAKE_CURRENT_SOURCE_DIR}/keep-alive.js
   ${MEMORY_GROWTH_FLAG}
   -s ALLOW_TABLE_GROWTH=1
   -s WASM_BIGINT=0
@@ -181,7 +180,8 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s WASM=1)
 
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
-  -s SINGLE_FILE=1)
+  -s SINGLE_FILE=1
+  -s EXPORT_ALL=1)
 
 set(EMCC_GLUE_ARGS
   -c
