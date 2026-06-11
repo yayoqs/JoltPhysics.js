@@ -14,7 +14,12 @@ jobs:
       - name: Checkout código con submódulos
         uses: actions/checkout@v4
         with:
-          submodules: recursive 
+          submodules: recursive
+
+      - name: Limpiar caché de build (forzar regeneración)
+        run: |
+          rm -rf Build/
+          rm -f glue.cpp glue.js jolt.idl
 
       - name: Construir con Docker (dentro del contenedor Emscripten)
         run: |
