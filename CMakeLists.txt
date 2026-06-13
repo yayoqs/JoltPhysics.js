@@ -96,6 +96,10 @@ else()
 	set(USE_WASM_SIMD OFF)
 endif()
 
+# ── NUEVO: forzar que JoltPhysics se compile con RTTI ──
+# (necesario para que el linker encuentre typeinfo de PathConstraintPath, etc.)
+set(USE_RTTI ON CACHE BOOL "Enable RTTI" FORCE)
+
 # Include Jolt
 include(FetchContent)
 FetchContent_Declare(
@@ -126,8 +130,6 @@ else()
 endif()
 
 set(EMCC_ARGS
-  # ── CAMBIO: quitamos -fno-rtti y -fno-exceptions ──
-  # (estaban aquí, ahora se pasan solo a EMCC_GLUE_ARGS si se desea)
   --extern-pre-js ${JOLT_FRONT_MATTER_FILE}
   --post-js glue.js
   # ── CAMBIO: closure=0 para desarrollo ──
@@ -184,8 +186,9 @@ set(EMCC_GLUE_ARGS
   -I${JoltPhysics_SOURCE_DIR}/..
   -Wall
   -std=c++17
-  # ── CAMBIO: quitamos -fno-rtti y -fno-exceptions para que no eliminen funciones ──
-  # (sin estas flags, el compilador incluye más código)
+  # ── CAMBIO: -frtti en lugar de -fno-rtti ──
+  -frtti
+  -fexceptions
   ${MULTI_THREADED_FLAG}
   -DJPH_OBJECT_LAYER_BITS=32
   -DJPH_DISABLE_CUSTOM_ALLOCATOR
@@ -193,8 +196,7 @@ set(EMCC_GLUE_ARGS
   ${MEMORY_PROFILER_FLAG}
   ${ENABLE_SIMD_FLAG})
 
-# ── CAMBIO: forzar modo Debug para primera prueba ──
-# (en Debug no se aplican optimizaciones y se incluye todo)
+# Can't find a way to automatically inherit settings set by target_compile_definitions, so hardcoding defines here
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	set(JOLT_IDL_FILE ${JOLT_IDL_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/JoltJS-DebugRenderer.idl )
 	set(EMCC_GLUE_ARGS
