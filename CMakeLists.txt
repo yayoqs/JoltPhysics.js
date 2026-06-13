@@ -78,6 +78,11 @@ else()
 	set(MULTI_THREADED_FLAG "")
 	set(ENVIRONMENT_FLAG -s ENVIRONMENT=web,node,worker)
 	set(OUTPUT_BASE_NAME "${OUTPUT_FOLDER}jolt-physics")
+	# Tried to keep this multi-platform since windows/mac/linux all treat -i different,
+	# though this creates extra backup file in a non-tracked folder.
+	# Removing 'thread_local' from the generated binding code fixes a small 'residual' allocation
+	# in the proper_cleanup.html demo and it is not needed when in single threaded mode.
+	# See: https://github.com/jrouwe/JoltPhysics.js/discussions/222#discussioncomment-11381106
 	set(REMOVE_THREAD_LOCAL sed -i.bak -e "s:thread_local::g" glue.cpp)
 endif()
 
@@ -96,10 +101,6 @@ else()
 	set(USE_WASM_SIMD OFF)
 endif()
 
-# ── NUEVO: forzar que JoltPhysics se compile con RTTI ──
-# (necesario para que el linker encuentre typeinfo de PathConstraintPath, etc.)
-set(USE_RTTI ON CACHE BOOL "Enable RTTI" FORCE)
-
 # Include Jolt
 include(FetchContent)
 FetchContent_Declare(
@@ -110,15 +111,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JoltPhysics)
 
-# ── NUEVO: inyectar -frtti en el target Jolt ──
-# Esto fuerza la compilación con RTTI de la biblioteca,
-# independientemente de la variable USE_RTTI
-if(TARGET Jolt)
-  target_compile_options(Jolt PRIVATE -frtti)
-  message(STATUS "RTTI enabled for Jolt target")
-endif()
-
-# Enable resizable heap, with some amount of slowness. Default is 128*1024*1024 = 128MB
 # Enable resizable heap, with some amount of slowness. Default is 128*1024*1024 = 128MB
 if (ALLOW_MEMORY_GROWTH)
 	set(MEMORY_GROWTH_FLAG
@@ -139,10 +131,11 @@ else()
 endif()
 
 set(EMCC_ARGS
+  -fno-rtti
+  -fno-exceptions
   --extern-pre-js ${JOLT_FRONT_MATTER_FILE}
   --post-js glue.js
-  # ── CAMBIO: closure=0 para desarrollo ──
-  --closure=0
+  --closure=1
   --closure-args="--dynamic_import_alias=replace_by_import"
   --closure-args="--externs"
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
@@ -195,9 +188,8 @@ set(EMCC_GLUE_ARGS
   -I${JoltPhysics_SOURCE_DIR}/..
   -Wall
   -std=c++17
-  # ── CAMBIO: -frtti en lugar de -fno-rtti ──
-  -frtti
-  -fexceptions
+  -fno-rtti
+  -fno-exceptions
   ${MULTI_THREADED_FLAG}
   -DJPH_OBJECT_LAYER_BITS=32
   -DJPH_DISABLE_CUSTOM_ALLOCATOR
@@ -257,8 +249,8 @@ add_custom_command(
 add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
 
 if (NOT BUILD_WASM_COMPAT_ONLY)
-	if (NOT ENABLE_MULTI_THREADING
-		AND NOT ENABLE_SIMD)
+	if (NOT ENABLE_MULTI_THREADING # Not compatible with multi threading due to error: 'void wasm::I64ToI32Lowering::visitStore(Store *): Assertion `!curr->isAtomic && "atomic store not implemented"' failed.'
+		AND NOT ENABLE_SIMD) # Not compatible with SIMD due to error: 'unhandled unaligned load'
 		add_custom_command(
 			OUTPUT ${OUTPUT_BASE_NAME}.js
 			COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
