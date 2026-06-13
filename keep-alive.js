@@ -1,39 +1,70 @@
-// ForceExports.cpp — obliga al linker a conservar TODAS las funciones eliminadas
-#include <Jolt/Jolt.h>
-#include <Jolt/Physics/Character/CharacterVirtual.h>
-#include <Jolt/Physics/Collision/NarrowPhaseQuery.h>
-#include <Jolt/Physics/Ragdoll/Ragdoll.h>
-#include <Jolt/Physics/SoftBody/SoftBodyShape.h>
-#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
+// keep-alive.js — Fuerza la inclusión de TODAS las funciones eliminadas por el linker
+(function() {
+  // ── CharacterVirtual ──────────────────────────────
+  if (Jolt.CharacterVirtual) {
+    var cvp = Jolt.CharacterVirtual.prototype;
+    cvp.Update;
+    cvp.ExtendedUpdate;
+    cvp.RefreshContacts;
+    cvp.SetPosition;
+    cvp.SetRotation;
+    cvp.GetCenterOfMassPosition;
+    cvp.GetCenterOfMassTransform;
+    cvp.GetTransformedShape;
+    cvp.SaveState;
+    cvp.RestoreState;
+  }
 
-void ForceExports_Dummy() {
-    // CharacterVirtual
-    (void)&JPH::CharacterVirtual::SetPosition;
-    (void)&JPH::CharacterVirtual::SetRotation;
-    (void)&JPH::CharacterVirtual::GetCenterOfMassPosition;
-    (void)&JPH::CharacterVirtual::GetCenterOfMassTransform;
-    (void)&JPH::CharacterVirtual::GetTransformedShape;
-    (void)&JPH::CharacterVirtual::RefreshContacts;
-    (void)&JPH::CharacterVirtual::SaveState;
-    (void)&JPH::CharacterVirtual::RestoreState;
+  // ── NarrowPhaseQuery ──────────────────────────────
+  if (Jolt.NarrowPhaseQuery) {
+    var npqp = Jolt.NarrowPhaseQuery.prototype;
+    npqp.CastRay;
+    npqp.CollidePoint;
+    npqp.CollideShape;
+    npqp.CollideShapeWithInternalEdgeRemoval;
+    npqp.CastShape;
+    npqp.CollectTransformedShapes;
+  }
 
-    // NarrowPhaseQuery
-    (void)&JPH::NarrowPhaseQuery::CastRay;
-    (void)&JPH::NarrowPhaseQuery::CollidePoint;
-    (void)&JPH::NarrowPhaseQuery::CollideShape;
-    (void)&JPH::NarrowPhaseQuery::CastShape;
-    (void)&JPH::NarrowPhaseQuery::CollectTransformedShapes;
+  // ── Ragdoll ───────────────────────────────────────
+  if (Jolt.Ragdoll) {
+    var rp = Jolt.Ragdoll.prototype;
+    rp.AddToPhysicsSystem;    // cubre tanto la versión con 1 arg como con 2
+    rp.IsActive;
+    rp.SetGroupID;
+    rp.GetRootTransform;
+    rp.GetWorldSpaceBounds;
+  }
 
-    // Ragdoll
-    (void)&JPH::Ragdoll::AddToPhysicsSystem;
-    (void)&JPH::Ragdoll::IsActive;
-    (void)&JPH::Ragdoll::SetGroupID;
-    (void)&JPH::Ragdoll::GetRootTransform;
-    (void)&JPH::Ragdoll::GetWorldSpaceBounds;
+  // ── RagdollSettings ───────────────────────────────
+  if (Jolt.RagdollSettings) {
+    Jolt.RagdollSettings.prototype.CreateRagdoll;
+    Jolt.RagdollSettings.prototype.Stabilize;
+  }
 
-    // SoftBodyShape::GetWorldSpaceBounds
-    (void)&JPH::SoftBodyShape::GetWorldSpaceBounds;
+  // ── PathConstraintSettings ────────────────────────
+  if (Jolt.PathConstraintSettings) {
+    Jolt.PathConstraintSettings.prototype.Create;
+  }
 
-    // VehicleConstraint
-    (void)&JPH::VehicleConstraint::VehicleConstraint;
-}
+  // ── PathConstraintPathHermite ─────────────────────
+  if (Jolt.PathConstraintPathHermite) {
+    Jolt.PathConstraintPathHermite.prototype;
+  }
+
+  // ── VehicleConstraint ─────────────────────────────
+  if (Jolt.VehicleConstraint) {
+    Jolt.VehicleConstraint.prototype;
+  }
+
+  // ── SoftBody ──────────────────────────────────────
+  if (Jolt.BodyInterface) {
+    Jolt.BodyInterface.prototype.CreateAndAddSoftBody;
+    Jolt.BodyInterface.prototype.CreateSoftBody;
+  }
+
+  // ── SoftBodyShape (GetWorldSpaceBounds) ───────────
+  if (Jolt.SoftBodyShape) {
+    Jolt.SoftBodyShape.prototype.GetWorldSpaceBounds;
+  }
+})();
