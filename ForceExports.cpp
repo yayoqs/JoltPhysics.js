@@ -6,7 +6,7 @@
 #include <Jolt/Physics/SoftBody/SoftBodyShape.h>
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 
-EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
+void ForceExports_Dummy() {
     // CharacterVirtual
     {
         using FnType = JPH::RMat44 (JPH::CharacterVirtual::*)() const;
@@ -54,4 +54,9 @@ EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
     (void)npq0; (void)npq1; (void)npq2; (void)npq3;
     (void)r0; (void)r1; (void)r2; (void)r3; (void)r4;
     (void)vc;
+}
+
+// Constructor que se ejecuta automáticamente al cargar el módulo
+__attribute__((constructor)) void ForceExports_Init() {
+    ForceExports_Dummy();
 }
