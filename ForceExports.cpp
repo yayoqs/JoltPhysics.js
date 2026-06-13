@@ -49,6 +49,6 @@ void ForceExports_Dummy() {
         (void)f;
     }
 
-    // VehicleConstraint: forzar inclusión de la clase usando un método existente (Reset)
-    (void)&JPH::VehicleConstraint::Reset;
+    // VehicleConstraint: forzar inclusión de la clase usando ResetWarmStart
+    (void)&JPH::VehicleConstraint::ResetWarmStart;
 }
