@@ -1,4 +1,4 @@
-// keep-alive.js — Fuerza la inclusión de funciones eliminadas por el linker
+// keep-alive.js — Fuerza la inclusión de TODAS las funciones eliminadas por el linker
 (function() {
   // ── CharacterVirtual ──────────────────────────────
   if (Jolt.CharacterVirtual) {
@@ -29,7 +29,7 @@
   // ── Ragdoll ───────────────────────────────────────
   if (Jolt.Ragdoll) {
     var rp = Jolt.Ragdoll.prototype;
-    rp.AddToPhysicsSystem;
+    rp.AddToPhysicsSystem;    // cubre tanto la versión con 1 arg como con 2
     rp.IsActive;
     rp.SetGroupID;
     rp.GetRootTransform;
@@ -61,5 +61,10 @@
   if (Jolt.BodyInterface) {
     Jolt.BodyInterface.prototype.CreateAndAddSoftBody;
     Jolt.BodyInterface.prototype.CreateSoftBody;
+  }
+
+  // ── SoftBodyShape (GetWorldSpaceBounds) ───────────
+  if (Jolt.SoftBodyShape) {
+    Jolt.SoftBodyShape.prototype.GetWorldSpaceBounds;
   }
 })();
