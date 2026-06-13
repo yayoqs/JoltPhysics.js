@@ -180,9 +180,7 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s WASM=1)
 
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
-  -s SINGLE_FILE=1
-  -s LINKABLE=1
-  -s ERROR_ON_UNDEFINED_SYMBOLS=0)
+  -s SINGLE_FILE=1)
 
 set(EMCC_GLUE_ARGS
   -c
@@ -274,9 +272,10 @@ endif()
 
 add_custom_command(
 	OUTPUT ${OUTPUT_BASE_NAME}.wasm-compat.js
+	COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/inject-exports.sh
 	COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_WASM_COMPAT_ARGS} -o ${OUTPUT_BASE_NAME}.wasm-compat.js
 	COMMAND ${REPLACE_IMPORT} ${OUTPUT_BASE_NAME}.wasm-compat.js
-	DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
+	DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/inject-exports.sh
 	COMMENT "Building JoltPhysics.js compat webassembly"
 	VERBATIM)
 add_custom_target(jolt-wasm-compat ALL DEPENDS ${OUTPUT_BASE_NAME}.wasm-compat.js)
