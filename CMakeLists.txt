@@ -179,8 +179,8 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
-# Lista de funciones que DEBEN ser exportadas (las 47 que faltan)
-set(FORCE_EXPORTS
+# Lista de funciones a exportar (nombres mangled)
+set(EXPORTED_FUNCTIONS_LIST
   "_ZN3JPH17CharacterVirtual6UpdateEfRKNS_6RVec3ERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterERKNS_11ShapeFilterERNS_13TempAllocatorE"
   "_ZN3JPH17CharacterVirtual14ExtendedUpdateEfRKNS_6RVec3ERKNS_22ExtendedUpdateSettingsERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterERKNS_11ShapeFilterERNS_13TempAllocatorE"
   "_ZN3JPH17CharacterVirtual11SetPositionERKNS_6RVec3E"
@@ -231,10 +231,14 @@ set(FORCE_EXPORTS
   "_ZN3JPH13BodyInterface15CreateSoftBodyERKNS_25SoftBodyCreationSettingsERKNS_6BodyIDE"
 )
 
+# Convertir a cadena con formato ['_func1','_func2',...]
+list(JOIN EXPORTED_FUNCTIONS_LIST "', '" EXPORTED_FUNCTIONS_STR)
+set(EXPORTED_FUNCTIONS_STR "['${EXPORTED_FUNCTIONS_STR}']")
+
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
   -s EXPORT_ALL=1
-  -s EXPORTED_FUNCTIONS="${FORCE_EXPORTS}")
+  -s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS_STR})
 
 set(EMCC_GLUE_ARGS
   -c
