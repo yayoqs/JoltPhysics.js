@@ -1,4 +1,4 @@
-// ForceExports.cpp — obliga al linker a conservar TODAS las funciones eliminadas
+#include <emscripten.h>
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Character/CharacterVirtual.h>
 #include <Jolt/Physics/Collision/NarrowPhaseQuery.h>
@@ -6,49 +6,56 @@
 #include <Jolt/Physics/SoftBody/SoftBodyShape.h>
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 
-void ForceExports_Dummy() {
+EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
+    volatile const void* p = nullptr;
+
     // CharacterVirtual
     {
         // GetCenterOfMassTransform (sobrecarga sin argumentos)
         using FnType = JPH::RMat44 (JPH::CharacterVirtual::*)() const;
-        FnType f = &JPH::CharacterVirtual::GetCenterOfMassTransform;
-        (void)f;
+        volatile FnType f = &JPH::CharacterVirtual::GetCenterOfMassTransform;
+        p = (void*)(f); // evitar warning
     }
-    // Otras funciones sin sobrecarga o con firma única
-    (void)&JPH::CharacterVirtual::SetPosition;
-    (void)&JPH::CharacterVirtual::SetRotation;
-    (void)&JPH::CharacterVirtual::GetCenterOfMassPosition;
-    (void)&JPH::CharacterVirtual::GetTransformedShape;
-    (void)&JPH::CharacterVirtual::RefreshContacts;
-    (void)&JPH::CharacterVirtual::SaveState;
-    (void)&JPH::CharacterVirtual::RestoreState;
+    volatile auto cv0 = &JPH::CharacterVirtual::SetPosition;
+    volatile auto cv1 = &JPH::CharacterVirtual::SetRotation;
+    volatile auto cv2 = &JPH::CharacterVirtual::GetCenterOfMassPosition;
+    volatile auto cv3 = &JPH::CharacterVirtual::GetTransformedShape;
+    volatile auto cv4 = &JPH::CharacterVirtual::RefreshContacts;
+    volatile auto cv5 = &JPH::CharacterVirtual::SaveState;
+    volatile auto cv6 = &JPH::CharacterVirtual::RestoreState;
 
     // NarrowPhaseQuery
     {
-        // CastRay (sobrecarga con 4 argumentos: RRayCast, RayCastResult, BroadPhaseLayerFilter, ObjectLayerFilter, BodyFilter)
         using FnType = bool (JPH::NarrowPhaseQuery::*)(const JPH::RRayCast &, JPH::RayCastResult &, const JPH::BroadPhaseLayerFilter &, const JPH::ObjectLayerFilter &, const JPH::BodyFilter &) const;
-        FnType f = &JPH::NarrowPhaseQuery::CastRay;
-        (void)f;
+        volatile FnType f = &JPH::NarrowPhaseQuery::CastRay;
+        p = (void*)(f);
     }
-    (void)&JPH::NarrowPhaseQuery::CollidePoint;
-    (void)&JPH::NarrowPhaseQuery::CollideShape;
-    (void)&JPH::NarrowPhaseQuery::CastShape;
-    (void)&JPH::NarrowPhaseQuery::CollectTransformedShapes;
+    volatile auto npq0 = &JPH::NarrowPhaseQuery::CollidePoint;
+    volatile auto npq1 = &JPH::NarrowPhaseQuery::CollideShape;
+    volatile auto npq2 = &JPH::NarrowPhaseQuery::CastShape;
+    volatile auto npq3 = &JPH::NarrowPhaseQuery::CollectTransformedShapes;
 
     // Ragdoll
-    (void)&JPH::Ragdoll::AddToPhysicsSystem;
-    (void)&JPH::Ragdoll::IsActive;
-    (void)&JPH::Ragdoll::SetGroupID;
-    (void)&JPH::Ragdoll::GetRootTransform;
-    (void)&JPH::Ragdoll::GetWorldSpaceBounds;
+    volatile auto r0 = &JPH::Ragdoll::AddToPhysicsSystem;
+    volatile auto r1 = &JPH::Ragdoll::IsActive;
+    volatile auto r2 = &JPH::Ragdoll::SetGroupID;
+    volatile auto r3 = &JPH::Ragdoll::GetRootTransform;
+    volatile auto r4 = &JPH::Ragdoll::GetWorldSpaceBounds;
 
-    // SoftBodyShape::GetWorldSpaceBounds (sobrecarga con Mat44 y Vec3)
+    // SoftBodyShape
     {
         using FnType = JPH::AABox (JPH::SoftBodyShape::*)(JPH::Mat44Arg, JPH::Vec3Arg) const;
-        FnType f = &JPH::SoftBodyShape::GetWorldSpaceBounds;
-        (void)f;
+        volatile FnType f = &JPH::SoftBodyShape::GetWorldSpaceBounds;
+        p = (void*)(f);
     }
 
-    // VehicleConstraint: forzar inclusión de la clase usando ResetWarmStart
-    (void)&JPH::VehicleConstraint::ResetWarmStart;
+    // VehicleConstraint
+    volatile auto vc = &JPH::VehicleConstraint::ResetWarmStart;
+
+    // Uso de p para evitar warnings
+    (void)p;
+    (void)cv0; (void)cv1; (void)cv2; (void)cv3; (void)cv4; (void)cv5; (void)cv6;
+    (void)npq0; (void)npq1; (void)npq2; (void)npq3;
+    (void)r0; (void)r1; (void)r2; (void)r3; (void)r4;
+    (void)vc;
 }
