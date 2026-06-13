@@ -110,6 +110,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JoltPhysics)
 
+# ── NUEVO: inyectar -frtti en el target Jolt ──
+# Esto fuerza la compilación con RTTI de la biblioteca,
+# independientemente de la variable USE_RTTI
+if(TARGET Jolt)
+  target_compile_options(Jolt PRIVATE -frtti)
+  message(STATUS "RTTI enabled for Jolt target")
+endif()
+
+# Enable resizable heap, with some amount of slowness. Default is 128*1024*1024 = 128MB
 # Enable resizable heap, with some amount of slowness. Default is 128*1024*1024 = 128MB
 if (ALLOW_MEMORY_GROWTH)
 	set(MEMORY_GROWTH_FLAG
