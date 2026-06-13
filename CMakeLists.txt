@@ -241,9 +241,9 @@ add_custom_command(
 	VERBATIM)
 
 add_custom_command(
-	OUTPUT glue.o
-	COMMAND emcc glue.cpp ForceExports.cpp ${EMCC_GLUE_ARGS} -o glue.o
-    DEPENDS glue.cpp ${JOLT_HEADER_FILE}
+    OUTPUT glue.o
+    COMMAND emcc glue.cpp ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${EMCC_GLUE_ARGS} -o glue.o
+    DEPENDS glue.cpp ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${JOLT_HEADER_FILE}
     COMMENT "Building JoltPhysics.js bindings (forced exports)"
     VERBATIM)
 add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
