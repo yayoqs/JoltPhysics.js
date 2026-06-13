@@ -179,66 +179,9 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
-# Lista de funciones a exportar (nombres mangled)
-set(EXPORTED_FUNCTIONS_LIST
-  "_ZN3JPH17CharacterVirtual6UpdateEfRKNS_6RVec3ERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterERKNS_11ShapeFilterERNS_13TempAllocatorE"
-  "_ZN3JPH17CharacterVirtual14ExtendedUpdateEfRKNS_6RVec3ERKNS_22ExtendedUpdateSettingsERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterERKNS_11ShapeFilterERNS_13TempAllocatorE"
-  "_ZN3JPH17CharacterVirtual11SetPositionERKNS_6RVec3E"
-  "_ZN3JPH17CharacterVirtual11SetRotationERKNS_4QuatE"
-  "_ZN3JPH17CharacterVirtual14RefreshContactsERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterERKNS_11ShapeFilterERNS_13TempAllocatorE"
-  "_ZN3JPH17CharacterVirtual15SetShapeOffsetERKNS_4Vec3E"
-  "_ZN3JPH17CharacterVirtual12SetUserDataEm"
-  "_ZN3JPH17CharacterVirtual16SetInnerBodyShapeEPKN3JPH5ShapeE"
-  "_ZN3JPH17CharacterVirtual24GetCenterOfMassPositionEv"
-  "_ZN3JPH17CharacterVirtual25GetCenterOfMassTransformEv"
-  "_ZN3JPH17CharacterVirtual20GetTransformedShapeEv"
-  "_ZN3JPH17CharacterVirtual9SaveStateERNS_13StateRecorderE"
-  "_ZN3JPH17CharacterVirtual12RestoreStateERNS_13StateRecorderE"
-  "_ZN3JPH17NarrowPhaseQuery7CastRayERKNS_8RRayCastERNS_13RayCastResultERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH17NarrowPhaseQuery9CastShapeERKNS_10RShapeCastERNS_14ShapeCastResultERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH17NarrowPhaseQuery12CollideShapeEPKNS_5ShapeENS_10RVec3ArgENS_4QuatERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH17NarrowPhaseQuery12CollidePointERKNS_6RVec3ERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH17NarrowPhaseQuery36CollideShapeWithInternalEdgeRemovalEPKNS_5ShapeENS_10RVec3ArgENS_4QuatERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH17NarrowPhaseQuery23CollectTransformedShapesERKNS_5AABoxERKNS_15BroadPhaseLayerERKNS_11ObjectLayerERKNS_10BodyFilterE"
-  "_ZN3JPH7Ragdoll19AddToPhysicsSystemENS_10EActivationE"
-  "_ZN3JPH7Ragdoll19AddToPhysicsSystemENS_10EActivationEb"
-  "_ZN3JPH7Ragdoll22RemoveFromPhysicsSystemEv"
-  "_ZN3JPH7Ragdoll22RemoveFromPhysicsSystemEb"
-  "_ZN3JPH7Ragdoll8ActivateEb"
-  "_ZN3JPH7Ragdoll8ActivateEv"
-  "_ZN3JPH23PathConstraintSettings6CreateERNS_4BodyES3_RKNS_6RVec3ES6_"
-  "_ZN3JPH13BodyInterface10GetPositionERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface11GetRotationERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface17GetLinearVelocityERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface18GetAngularVelocityERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface18GetWorldTransformERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface25GetCenterOfMassTransformERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface20GetTransformedShapeERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface8GetShapeERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface14GetObjectLayerERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface15GetRestitutionERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface11GetFrictionERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface17GetGravityFactorERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface24GetUseManifoldReductionERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface8IsSensorERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface8IsActiveERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface12GetMotionTypeERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface16GetMotionQualityERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface11GetUserDataERKNS_6BodyIDE"
-  "_ZN3JPH13BodyInterface10GetMaterialERKNS_6BodyIDEPKNS_5ShapeE"
-  "_ZN3JPH13BodyInterface20CreateAndAddSoftBodyERKNS_25SoftBodyCreationSettingsENS_10EActivationE"
-  "_ZN3JPH13BodyInterface13CreateSoftBodyERKNS_25SoftBodyCreationSettingsE"
-  "_ZN3JPH13BodyInterface15CreateSoftBodyERKNS_25SoftBodyCreationSettingsERKNS_6BodyIDE"
-)
-
-# Convertir a cadena con formato ['_func1','_func2',...]
-list(JOIN EXPORTED_FUNCTIONS_LIST "', '" EXPORTED_FUNCTIONS_STR)
-set(EXPORTED_FUNCTIONS_STR "['${EXPORTED_FUNCTIONS_STR}']")
-
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
-  -s EXPORT_ALL=1
-  -s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS_STR})
+  -s MAIN_MODULE=1)
 
 set(EMCC_GLUE_ARGS
   -c
@@ -304,21 +247,14 @@ add_custom_command(
     COMMENT "Building JoltPhysics.js bindings (glue)"
     VERBATIM)
 
-add_custom_command(
-    OUTPUT ForceExports.o
-    COMMAND emcc ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${EMCC_GLUE_ARGS} -o ForceExports.o
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${JOLT_HEADER_FILE}
-    COMMENT "Compiling ForceExports.cpp"
-    VERBATIM)
-
-add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ForceExports.o ${JOLT_TYPING})
+add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
 
 if (NOT BUILD_WASM_COMPAT_ONLY)
 	if (NOT ENABLE_MULTI_THREADING # Not compatible with multi threading due to error: 'void wasm::I64ToI32Lowering::visitStore(Store *): Assertion `!curr->isAtomic && "atomic store not implemented"' failed.'
 		AND NOT ENABLE_SIMD) # Not compatible with SIMD due to error: 'unhandled unaligned load'
 		add_custom_command(
 			OUTPUT ${OUTPUT_BASE_NAME}.js
-			COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
+			COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
 			DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 			COMMENT "Building JoltPhysics.js javascript"
 			VERBATIM)
@@ -327,7 +263,7 @@ if (NOT BUILD_WASM_COMPAT_ONLY)
 
 	add_custom_command(
 		OUTPUT ${OUTPUT_BASE_NAME}.wasm.js ${OUTPUT_BASE_NAME}.wasm.wasm
-		COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_WASM_ARGS} -o ${OUTPUT_BASE_NAME}.wasm.js
+		COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_WASM_ARGS} -o ${OUTPUT_BASE_NAME}.wasm.js
 		COMMAND ${REPLACE_IMPORT} ${OUTPUT_BASE_NAME}.wasm.js
 		DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 		COMMENT "Building JoltPhysics.js webassembly"
@@ -337,7 +273,7 @@ endif()
 
 add_custom_command(
 	OUTPUT ${OUTPUT_BASE_NAME}.wasm-compat.js
-	COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_WASM_COMPAT_ARGS} -o ${OUTPUT_BASE_NAME}.wasm-compat.js
+	COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_WASM_COMPAT_ARGS} -o ${OUTPUT_BASE_NAME}.wasm-compat.js
 	COMMAND ${REPLACE_IMPORT} ${OUTPUT_BASE_NAME}.wasm-compat.js
 	DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 	COMMENT "Building JoltPhysics.js compat webassembly"
