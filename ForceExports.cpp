@@ -7,14 +7,11 @@
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 
 EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
-    volatile const void* p = nullptr;
-
     // CharacterVirtual
     {
-        // GetCenterOfMassTransform (sobrecarga sin argumentos)
         using FnType = JPH::RMat44 (JPH::CharacterVirtual::*)() const;
         volatile FnType f = &JPH::CharacterVirtual::GetCenterOfMassTransform;
-        p = (void*)(f); // evitar warning
+        (void)f;
     }
     volatile auto cv0 = &JPH::CharacterVirtual::SetPosition;
     volatile auto cv1 = &JPH::CharacterVirtual::SetRotation;
@@ -28,7 +25,7 @@ EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
     {
         using FnType = bool (JPH::NarrowPhaseQuery::*)(const JPH::RRayCast &, JPH::RayCastResult &, const JPH::BroadPhaseLayerFilter &, const JPH::ObjectLayerFilter &, const JPH::BodyFilter &) const;
         volatile FnType f = &JPH::NarrowPhaseQuery::CastRay;
-        p = (void*)(f);
+        (void)f;
     }
     volatile auto npq0 = &JPH::NarrowPhaseQuery::CollidePoint;
     volatile auto npq1 = &JPH::NarrowPhaseQuery::CollideShape;
@@ -42,18 +39,17 @@ EMSCRIPTEN_KEEPALIVE void ForceExports_Dummy() {
     volatile auto r3 = &JPH::Ragdoll::GetRootTransform;
     volatile auto r4 = &JPH::Ragdoll::GetWorldSpaceBounds;
 
-    // SoftBodyShape
+    // SoftBodyShape::GetWorldSpaceBounds
     {
         using FnType = JPH::AABox (JPH::SoftBodyShape::*)(JPH::Mat44Arg, JPH::Vec3Arg) const;
         volatile FnType f = &JPH::SoftBodyShape::GetWorldSpaceBounds;
-        p = (void*)(f);
+        (void)f;
     }
 
     // VehicleConstraint
     volatile auto vc = &JPH::VehicleConstraint::ResetWarmStart;
 
-    // Uso de p para evitar warnings
-    (void)p;
+    // Uso para evitar warnings
     (void)cv0; (void)cv1; (void)cv2; (void)cv3; (void)cv4; (void)cv5; (void)cv6;
     (void)npq0; (void)npq1; (void)npq2; (void)npq3;
     (void)r0; (void)r1; (void)r2; (void)r3; (void)r4;
