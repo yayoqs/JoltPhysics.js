@@ -8,17 +8,28 @@
 
 void ForceExports_Dummy() {
     // CharacterVirtual
+    {
+        // GetCenterOfMassTransform (sobrecarga sin argumentos)
+        using FnType = JPH::RMat44 (JPH::CharacterVirtual::*)() const;
+        FnType f = &JPH::CharacterVirtual::GetCenterOfMassTransform;
+        (void)f;
+    }
+    // Otras funciones sin sobrecarga o con firma única
     (void)&JPH::CharacterVirtual::SetPosition;
     (void)&JPH::CharacterVirtual::SetRotation;
     (void)&JPH::CharacterVirtual::GetCenterOfMassPosition;
-    (void)&JPH::CharacterVirtual::GetCenterOfMassTransform;
     (void)&JPH::CharacterVirtual::GetTransformedShape;
     (void)&JPH::CharacterVirtual::RefreshContacts;
     (void)&JPH::CharacterVirtual::SaveState;
     (void)&JPH::CharacterVirtual::RestoreState;
 
     // NarrowPhaseQuery
-    (void)&JPH::NarrowPhaseQuery::CastRay;
+    {
+        // CastRay (sobrecarga con 4 argumentos: RRayCast, RayCastResult, BroadPhaseLayerFilter, ObjectLayerFilter, BodyFilter)
+        using FnType = bool (JPH::NarrowPhaseQuery::*)(const JPH::RRayCast &, JPH::RayCastResult &, const JPH::BroadPhaseLayerFilter &, const JPH::ObjectLayerFilter &, const JPH::BodyFilter &) const;
+        FnType f = &JPH::NarrowPhaseQuery::CastRay;
+        (void)f;
+    }
     (void)&JPH::NarrowPhaseQuery::CollidePoint;
     (void)&JPH::NarrowPhaseQuery::CollideShape;
     (void)&JPH::NarrowPhaseQuery::CastShape;
@@ -31,9 +42,13 @@ void ForceExports_Dummy() {
     (void)&JPH::Ragdoll::GetRootTransform;
     (void)&JPH::Ragdoll::GetWorldSpaceBounds;
 
-    // SoftBodyShape::GetWorldSpaceBounds
-    (void)&JPH::SoftBodyShape::GetWorldSpaceBounds;
+    // SoftBodyShape::GetWorldSpaceBounds (sobrecarga con Mat44 y Vec3)
+    {
+        using FnType = JPH::AABox (JPH::SoftBodyShape::*)(JPH::Mat44Arg, JPH::Vec3Arg) const;
+        FnType f = &JPH::SoftBodyShape::GetWorldSpaceBounds;
+        (void)f;
+    }
 
-    // VehicleConstraint
-    (void)&JPH::VehicleConstraint::VehicleConstraint;
+    // VehicleConstraint: forzar inclusión de la clase usando un método existente (GetWheelCount)
+    (void)&JPH::VehicleConstraint::GetWheelCount;
 }
