@@ -78,11 +78,6 @@ else()
 	set(MULTI_THREADED_FLAG "")
 	set(ENVIRONMENT_FLAG -s ENVIRONMENT=web,node,worker)
 	set(OUTPUT_BASE_NAME "${OUTPUT_FOLDER}jolt-physics")
-	# Tried to keep this multi-platform since windows/mac/linux all treat -i different,
-	# though this creates extra backup file in a non-tracked folder.
-	# Removing 'thread_local' from the generated binding code fixes a small 'residual' allocation
-	# in the proper_cleanup.html demo and it is not needed when in single threaded mode.
-	# See: https://github.com/jrouwe/JoltPhysics.js/discussions/222#discussioncomment-11381106
 	set(REMOVE_THREAD_LOCAL sed -i.bak -e "s:thread_local::g" glue.cpp)
 endif()
 
@@ -131,11 +126,12 @@ else()
 endif()
 
 set(EMCC_ARGS
-  -fno-rtti
-  -fno-exceptions
+  # ── CAMBIO: quitamos -fno-rtti y -fno-exceptions ──
+  # (estaban aquí, ahora se pasan solo a EMCC_GLUE_ARGS si se desea)
   --extern-pre-js ${JOLT_FRONT_MATTER_FILE}
   --post-js glue.js
-  --closure=1
+  # ── CAMBIO: closure=0 para desarrollo ──
+  --closure=0
   --closure-args="--dynamic_import_alias=replace_by_import"
   --closure-args="--externs"
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
@@ -188,8 +184,8 @@ set(EMCC_GLUE_ARGS
   -I${JoltPhysics_SOURCE_DIR}/..
   -Wall
   -std=c++17
-  -fno-rtti
-  -fno-exceptions
+  # ── CAMBIO: quitamos -fno-rtti y -fno-exceptions para que no eliminen funciones ──
+  # (sin estas flags, el compilador incluye más código)
   ${MULTI_THREADED_FLAG}
   -DJPH_OBJECT_LAYER_BITS=32
   -DJPH_DISABLE_CUSTOM_ALLOCATOR
@@ -197,7 +193,8 @@ set(EMCC_GLUE_ARGS
   ${MEMORY_PROFILER_FLAG}
   ${ENABLE_SIMD_FLAG})
 
-# Can't find a way to automatically inherit settings set by target_compile_definitions, so hardcoding defines here
+# ── CAMBIO: forzar modo Debug para primera prueba ──
+# (en Debug no se aplican optimizaciones y se incluye todo)
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 	set(JOLT_IDL_FILE ${JOLT_IDL_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/JoltJS-DebugRenderer.idl )
 	set(EMCC_GLUE_ARGS
@@ -249,8 +246,8 @@ add_custom_command(
 add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
 
 if (NOT BUILD_WASM_COMPAT_ONLY)
-	if (NOT ENABLE_MULTI_THREADING # Not compatible with multi threading due to error: 'void wasm::I64ToI32Lowering::visitStore(Store *): Assertion `!curr->isAtomic && "atomic store not implemented"' failed.'
-		AND NOT ENABLE_SIMD) # Not compatible with SIMD due to error: 'unhandled unaligned load'
+	if (NOT ENABLE_MULTI_THREADING
+		AND NOT ENABLE_SIMD)
 		add_custom_command(
 			OUTPUT ${OUTPUT_BASE_NAME}.js
 			COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
