@@ -241,27 +241,19 @@ add_custom_command(
 	VERBATIM)
 
 add_custom_command(
-    OUTPUT glue.o
-    COMMAND emcc glue.cpp ${EMCC_GLUE_ARGS} -o glue.o
-    DEPENDS glue.cpp ${JOLT_HEADER_FILE}
-    COMMENT "Building JoltPhysics.js bindings (glue)"
-    VERBATIM)
-
-add_custom_command(
-    OUTPUT ForceExports.o
-    COMMAND emcc ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${EMCC_GLUE_ARGS} -o ForceExports.o
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ForceExports.cpp ${JOLT_HEADER_FILE}
-    COMMENT "Compiling ForceExports.cpp"
-    VERBATIM)
-
-add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ForceExports.o ${JOLT_TYPING})
+	OUTPUT glue.o
+	COMMAND emcc glue.cpp ${EMCC_GLUE_ARGS} -o glue.o
+	DEPENDS glue.cpp ${JOLT_HEADER_FILE}
+	COMMENT "Building JoltPhysics.js bindings"
+	VERBATIM)
+add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
 
 if (NOT BUILD_WASM_COMPAT_ONLY)
 	if (NOT ENABLE_MULTI_THREADING # Not compatible with multi threading due to error: 'void wasm::I64ToI32Lowering::visitStore(Store *): Assertion `!curr->isAtomic && "atomic store not implemented"' failed.'
 		AND NOT ENABLE_SIMD) # Not compatible with SIMD due to error: 'unhandled unaligned load'
 		add_custom_command(
 			OUTPUT ${OUTPUT_BASE_NAME}.js
-			COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
+			COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
 			DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 			COMMENT "Building JoltPhysics.js javascript"
 			VERBATIM)
@@ -270,7 +262,7 @@ if (NOT BUILD_WASM_COMPAT_ONLY)
 
 	add_custom_command(
 		OUTPUT ${OUTPUT_BASE_NAME}.wasm.js ${OUTPUT_BASE_NAME}.wasm.wasm
-		COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_WASM_ARGS} -o ${OUTPUT_BASE_NAME}.wasm.js
+		COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_WASM_ARGS} -o ${OUTPUT_BASE_NAME}.wasm.js
 		COMMAND ${REPLACE_IMPORT} ${OUTPUT_BASE_NAME}.wasm.js
 		DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 		COMMENT "Building JoltPhysics.js webassembly"
@@ -280,7 +272,7 @@ endif()
 
 add_custom_command(
 	OUTPUT ${OUTPUT_BASE_NAME}.wasm-compat.js
-	COMMAND emcc glue.o ForceExports.o $<TARGET_FILE:Jolt> ${EMCC_WASM_COMPAT_ARGS} -o ${OUTPUT_BASE_NAME}.wasm-compat.js
+	COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_WASM_COMPAT_ARGS} -o ${OUTPUT_BASE_NAME}.wasm-compat.js
 	COMMAND ${REPLACE_IMPORT} ${OUTPUT_BASE_NAME}.wasm-compat.js
 	DEPENDS jolt-bindings ${JOLT_FRONT_MATTER_FILE} ${JOLT_TARGETS} ${JOLT_IDL_FILE} ${JOLT_HEADER_FILE}
 	COMMENT "Building JoltPhysics.js compat webassembly"
