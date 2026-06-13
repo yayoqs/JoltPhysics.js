@@ -4,6 +4,7 @@
 #include <Jolt/Physics/Collision/NarrowPhaseQuery.h>
 #include <Jolt/Physics/Ragdoll/Ragdoll.h>
 #include <Jolt/Physics/SoftBody/SoftBodyShape.h>
+#include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 
 void ForceExports_Dummy() {
     // CharacterVirtual
@@ -32,4 +33,7 @@ void ForceExports_Dummy() {
 
     // SoftBodyShape::GetWorldSpaceBounds
     (void)&JPH::SoftBodyShape::GetWorldSpaceBounds;
+
+    // VehicleConstraint
+    (void)&JPH::VehicleConstraint::VehicleConstraint;
 }
