@@ -78,16 +78,10 @@ else()
 	set(MULTI_THREADED_FLAG "")
 	set(ENVIRONMENT_FLAG -s ENVIRONMENT=web,node,worker)
 	set(OUTPUT_BASE_NAME "${OUTPUT_FOLDER}jolt-physics")
-	# Tried to keep this multi-platform since windows/mac/linux all treat -i different,
-	# though this creates extra backup file in a non-tracked folder.
-	# Removing 'thread_local' from the generated binding code fixes a small 'residual' allocation
-	# in the proper_cleanup.html demo and it is not needed when in single threaded mode.
-	# See: https://github.com/jrouwe/JoltPhysics.js/discussions/222#discussioncomment-11381106
 	set(REMOVE_THREAD_LOCAL sed -i.bak -e "s:thread_local::g" glue.cpp)
 endif()
 
 # Replace 'replace_by_import' by 'import' in the generated JS code to workaround a bug in emscripten
-# See: https://github.com/jrouwe/JoltPhysics.js/issues/245
 set(REPLACE_IMPORT sed -i -e "s:replace_by_import:import:g")
 
 # Enable SIMD flags
@@ -141,7 +135,6 @@ set(EMCC_ARGS
   --closure-args="${CMAKE_CURRENT_SOURCE_DIR}/extern-import.js"
   ${MULTI_THREADED_FLAG}
   --post-js ${CMAKE_CURRENT_SOURCE_DIR}/helpers.js
-  --post-js ${CMAKE_CURRENT_SOURCE_DIR}/post-keepalive.js
   ${MEMORY_GROWTH_FLAG}
   -s ALLOW_TABLE_GROWTH=1
   -s WASM_BIGINT=0
@@ -180,23 +173,9 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
-# Lista de las 5 funciones rebeldes que necesitamos exportar
-set(EXPORTED_FUNCTIONS_LIST
-  "_emscripten_bind_NarrowPhaseQuery_CastShape_8"
-  "_emscripten_bind_NarrowPhaseQuery_CollidePoint_6"
-  "_emscripten_bind_NarrowPhaseQuery_CollectTransformedShapes_6"
-  "_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2"
-  "_emscripten_bind_BodyInterface_CreateSoftBody_1"
-)
-
-# Convertir a formato JSON: ['_func1','_func2',...]
-list(JOIN EXPORTED_FUNCTIONS_LIST "', '" EXPORTED_FUNCTIONS_STR)
-set(EXPORTED_FUNCTIONS_STR "['${EXPORTED_FUNCTIONS_STR}']")
-
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
-  -s EXPORT_ALL=1
-  -s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS_STR})
+  -s EXPORT_ALL=1)
 
 set(EMCC_GLUE_ARGS
   -c
@@ -267,8 +246,8 @@ add_custom_command(
 add_custom_target(jolt-bindings ALL DEPENDS glue.js glue.o ${JOLT_TYPING})
 
 if (NOT BUILD_WASM_COMPAT_ONLY)
-	if (NOT ENABLE_MULTI_THREADING # Not compatible with multi threading due to error: 'void wasm::I64ToI32Lowering::visitStore(Store *): Assertion `!curr->isAtomic && "atomic store not implemented"' failed.'
-		AND NOT ENABLE_SIMD) # Not compatible with SIMD due to error: 'unhandled unaligned load'
+	if (NOT ENABLE_MULTI_THREADING
+		AND NOT ENABLE_SIMD)
 		add_custom_command(
 			OUTPUT ${OUTPUT_BASE_NAME}.js
 			COMMAND emcc glue.o $<TARGET_FILE:Jolt> ${EMCC_JS_ARGS} -o ${OUTPUT_BASE_NAME}.js
