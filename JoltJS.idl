@@ -3179,7 +3179,7 @@ interface ArrayCharacterVirtualContact {
 };
 
 interface TempAllocator {
-
+  void TempAllocator();
 };
 
 interface BroadPhaseLayerFilter {
