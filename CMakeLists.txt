@@ -181,7 +181,8 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
 
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
-    -s EXPORT_ALL=1)
+  -s EXPORT_ALL=1
+  -s EXPORTED_FUNCTIONS="['_emscripten_bind_NarrowPhaseQuery_CastShape_8','_emscripten_bind_NarrowPhaseQuery_CollidePoint_6','_emscripten_bind_NarrowPhaseQuery_CollectTransformedShapes_6','_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2','_emscripten_bind_BodyInterface_CreateSoftBody_1']")
 
 set(EMCC_GLUE_ARGS
   -c
