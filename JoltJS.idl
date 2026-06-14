@@ -4045,7 +4045,7 @@ interface JoltInterface {
 	void JoltInterface([Const, Ref] JoltSettings inSettings);
 	void Step(float inDeltaTime, long inCollisionSteps);
 	PhysicsSystem GetPhysicsSystem();
-	TempAllocator GetTempAllocator();
+	[Const] TempAllocator GetTempAllocator();
 	ObjectLayerPairFilter GetObjectLayerPairFilter();
 	ObjectVsBroadPhaseLayerFilter GetObjectVsBroadPhaseLayerFilter();
 	static unsigned long sGetTotalMemory();
