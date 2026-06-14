@@ -1654,7 +1654,7 @@ interface PathConstraintPath {
 };
 
 interface PathConstraintPathHermite {
-  [Const] void PathConstraintPathHermite();
+  void PathConstraintPathHermite();
 	void AddPoint([Const, Ref] Vec3 inPosition, [Const, Ref] Vec3 inTangent, [Const, Ref] Vec3 inNormal);
 };
 
@@ -3273,7 +3273,6 @@ interface ShapeFilter {
 };
 
 interface TempAllocator {
-  void TempAllocator();
 };
 
 [JSImplementation="ShapeFilter"]
