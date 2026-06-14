@@ -1,12 +1,19 @@
-// Forzar que el optimizador JS conserve estos wrappers
+// post-keepalive.js – Fuerza la inclusión de las últimas 5 funciones
 (function() {
   if (typeof Jolt !== 'undefined') {
     // NarrowPhaseQuery
-    Jolt.NarrowPhaseQuery && (Jolt.NarrowPhaseQuery.prototype.CastShape,
-                               Jolt.NarrowPhaseQuery.prototype.CollidePoint,
-                               Jolt.NarrowPhaseQuery.prototype.CollectTransformedShapes);
-    // BodyInterface SoftBody
-    Jolt.BodyInterface && (Jolt.BodyInterface.prototype.CreateAndAddSoftBody,
-                            Jolt.BodyInterface.prototype.CreateSoftBody);
+    var npq = Jolt.NarrowPhaseQuery;
+    if (npq) {
+      npq.prototype.CastShape;
+      npq.prototype.CollidePoint;
+      npq.prototype.CollectTransformedShapes;
+    }
+
+    // BodyInterface (SoftBody)
+    var bi = Jolt.BodyInterface;
+    if (bi) {
+      bi.prototype.CreateAndAddSoftBody;
+      bi.prototype.CreateSoftBody;
+    }
   }
 })();
