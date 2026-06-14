@@ -3178,10 +3178,6 @@ interface ArrayCharacterVirtualContact {
 	[Const, Ref] CharacterVirtualContact at(long inIndex);
 };
 
-interface TempAllocator {
-  void TempAllocator();
-};
-
 interface BroadPhaseLayerFilter {
 	void BroadPhaseLayerFilter();
 };
@@ -3274,6 +3270,10 @@ IgnoreMultipleBodiesFilter implements BodyFilter;
 
 interface ShapeFilter {
 	void ShapeFilter();
+};
+
+interface TempAllocator {
+  void TempAllocator();
 };
 
 [JSImplementation="ShapeFilter"]
