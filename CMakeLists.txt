@@ -225,7 +225,6 @@ set(EXPORTED_FUNCTIONS_LIST
   "ZN3JPH13BodyInterface12GetMotionTypeERKNS_6BodyIDE"
   "ZN3JPH13BodyInterface16GetMotionQualityERKNS_6BodyIDE"
   "ZN3JPH13BodyInterface11GetUserDataERKNS_6BodyIDE"
-  "ZN3JPH13BodyInterface10GetMaterialERKNS_6BodyIDEPKNS_5ShapeE"
   "ZN3JPH13BodyInterface20CreateAndAddSoftBodyERKNS_25SoftBodyCreationSettingsENS_10EActivationE"
   "ZN3JPH13BodyInterface13CreateSoftBodyERKNS_25SoftBodyCreationSettingsE"
   "ZN3JPH13BodyInterface15CreateSoftBodyERKNS_25SoftBodyCreationSettingsERKNS_6BodyIDE"
