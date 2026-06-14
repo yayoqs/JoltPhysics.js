@@ -181,8 +181,19 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
 
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
-  -s EXPORT_ALL=1
-  -s EXPORTED_FUNCTIONS="['_emscripten_bind_NarrowPhaseQuery_CastShape_8','_emscripten_bind_NarrowPhaseQuery_CollidePoint_6','_emscripten_bind_NarrowPhaseQuery_CollectTransformedShapes_6','_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2','_emscripten_bind_BodyInterface_CreateSoftBody_1']")
+  -s EXPORT_ALL=1)
+
+# Forzar la exportación de las últimas 5 funciones rebeldes
+set(EXPORTED_FUNCTIONS_LIST
+  "_emscripten_bind_NarrowPhaseQuery_CastShape_8"
+  "_emscripten_bind_NarrowPhaseQuery_CollidePoint_6"
+  "_emscripten_bind_NarrowPhaseQuery_CollectTransformedShapes_6"
+  "_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2"
+  "_emscripten_bind_BodyInterface_CreateSoftBody_1"
+)
+foreach(FUNC ${EXPORTED_FUNCTIONS_LIST})
+  list(APPEND EMCC_WASM_COMPAT_ARGS -s EXPORTED_FUNCTIONS=${FUNC})
+endforeach()
 
 set(EMCC_GLUE_ARGS
   -c
