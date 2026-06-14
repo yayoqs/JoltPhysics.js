@@ -235,6 +235,8 @@ add_custom_command(
 	COMMAND cat ${JOLT_IDL_FILE} > jolt.idl
 	COMMAND ${PYTHON} ${WEBIDL_BINDER_SCRIPT} jolt.idl glue
 	COMMAND ${REMOVE_THREAD_LOCAL}
+	# Parche: evitar la instanciación de TempAllocator (clase abstracta)
+	COMMAND sed -i.bak -e "s/return new TempAllocator();/return (TempAllocator*)0;/g" glue.cpp
 	DEPENDS ${JOLT_IDL_FILE}
 	COMMENT "Generating JoltPhysics.js bindings"
 	VERBATIM)
