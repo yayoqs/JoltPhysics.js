@@ -173,9 +173,68 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
+# Lista explícita de las 42 funciones rescatadas (nombres de los wrappers en glue.cpp)
+set(EXPORTED_FUNCTIONS_LIST
+  # CharacterVirtual (13 funciones)
+  "_emscripten_bind_CharacterVirtual_Update_7"
+  "_emscripten_bind_CharacterVirtual_ExtendedUpdate_8"
+  "_emscripten_bind_CharacterVirtual_SetPosition_1"
+  "_emscripten_bind_CharacterVirtual_SetRotation_1"
+  "_emscripten_bind_CharacterVirtual_RefreshContacts_5"
+  "_emscripten_bind_CharacterVirtual_SetShapeOffset_1"
+  "_emscripten_bind_CharacterVirtual_SetUserData_1"
+  "_emscripten_bind_CharacterVirtual_SetInnerBodyShape_1"
+  "_emscripten_bind_CharacterVirtual_GetCenterOfMassPosition_0"
+  "_emscripten_bind_CharacterVirtual_GetCenterOfMassTransform_0"
+  "_emscripten_bind_CharacterVirtual_GetTransformedShape_0"
+  "_emscripten_bind_CharacterVirtual_SaveState_1"
+  "_emscripten_bind_CharacterVirtual_RestoreState_1"
+  # NarrowPhaseQuery (6 funciones)
+  "_emscripten_bind_NarrowPhaseQuery_CastRay_7"
+  "_emscripten_bind_NarrowPhaseQuery_CollideShape_10"
+  "_emscripten_bind_NarrowPhaseQuery_CollideShapeWithInternalEdgeRemoval_10"
+  "_emscripten_bind_NarrowPhaseQuery_CastShape_8"
+  "_emscripten_bind_NarrowPhaseQuery_CollidePoint_6"
+  "_emscripten_bind_NarrowPhaseQuery_CollectTransformedShapes_6"
+  # Ragdoll (5 funciones)
+  "_emscripten_bind_Ragdoll_AddToPhysicsSystem_1"
+  "_emscripten_bind_Ragdoll_AddToPhysicsSystem_2"
+  "_emscripten_bind_Ragdoll_RemoveFromPhysicsSystem_0"
+  "_emscripten_bind_Ragdoll_RemoveFromPhysicsSystem_1"
+  "_emscripten_bind_Ragdoll_Activate_0"
+  "_emscripten_bind_Ragdoll_Activate_1"
+  # PathConstraintSettings (1 función)
+  "_emscripten_bind_PathConstraintSettings_Create_2"
+  # BodyInterface getters (18 funciones)
+  "_emscripten_bind_BodyInterface_GetPosition_1"
+  "_emscripten_bind_BodyInterface_GetRotation_1"
+  "_emscripten_bind_BodyInterface_GetLinearVelocity_1"
+  "_emscripten_bind_BodyInterface_GetAngularVelocity_1"
+  "_emscripten_bind_BodyInterface_GetWorldTransform_1"
+  "_emscripten_bind_BodyInterface_GetCenterOfMassTransform_1"
+  "_emscripten_bind_BodyInterface_GetTransformedShape_1"
+  "_emscripten_bind_BodyInterface_GetShape_1"
+  "_emscripten_bind_BodyInterface_GetObjectLayer_1"
+  "_emscripten_bind_BodyInterface_GetRestitution_1"
+  "_emscripten_bind_BodyInterface_GetFriction_1"
+  "_emscripten_bind_BodyInterface_GetGravityFactor_1"
+  "_emscripten_bind_BodyInterface_GetUseManifoldReduction_1"
+  "_emscripten_bind_BodyInterface_IsSensor_1"
+  "_emscripten_bind_BodyInterface_IsActive_1"
+  "_emscripten_bind_BodyInterface_GetMotionType_1"
+  "_emscripten_bind_BodyInterface_GetMotionQuality_1"
+  "_emscripten_bind_BodyInterface_GetUserData_1"
+  # SoftBody (2 funciones)
+  "_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2"
+  "_emscripten_bind_BodyInterface_CreateSoftBody_1"
+)
+
+list(JOIN EXPORTED_FUNCTIONS_LIST "', '" EXPORTED_FUNCTIONS_STR)
+set(EXPORTED_FUNCTIONS_STR "['${EXPORTED_FUNCTIONS_STR}']")
+
 set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
   -s SINGLE_FILE=1
-  -s EXPORT_ALL=1)
+  -s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS_STR})
 
 set(EMCC_GLUE_ARGS
   -c
