@@ -16,13 +16,26 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Construir con Docker (dentro del contenedor Emscripten)
+      - name: Configurar CMake
         run: |
-          chmod +x build.sh
-          ./build.sh
+          mkdir -p Build/Debug/ST
+          cd Build/Debug/ST
+          emcmake cmake ../../../.. -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Generar bindings (glue.cpp)
+        run: |
+          cd Build/Debug/ST
+          make jolt-bindings -j$(nproc)
 
       - name: Copiar glue.cpp para diagnóstico
-        run: cp glue.cpp dist/
+        run: |
+          find . -name "glue.cpp" -exec cp {} dist/ \;
+          ls -la dist/glue.cpp || echo "glue.cpp no encontrado en ningún lugar"
+
+      - name: Continuar compilación
+        run: |
+          cd Build/Debug/ST
+          make -j$(nproc)
 
       - name: Subir artefactos
         uses: actions/upload-artifact@v4
