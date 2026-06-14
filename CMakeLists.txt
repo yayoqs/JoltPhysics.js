@@ -230,8 +230,10 @@ add_custom_command(
 	COMMAND cat ${JOLT_IDL_FILE} > jolt.idl
 	COMMAND ${PYTHON} ${WEBIDL_BINDER_SCRIPT} jolt.idl glue
 	COMMAND ${REMOVE_THREAD_LOCAL}
-	# Parche: evitar la instanciación de TempAllocator (clase abstracta)
-	COMMAND sed -i.bak -e "s/return new TempAllocator();/return (TempAllocator*)0;/g" glue.cpp
+	# CORRECCIÓN: usar TempAllocatorMalloc en lugar de puntero nulo
+	COMMAND sed -i.bak -e "s/return new TempAllocator();/return new TempAllocatorMalloc();/g" glue.cpp
+	# Verificación de que el parche se aplicó
+	COMMAND grep -c "TempAllocatorMalloc" glue.cpp || (echo "ERROR: sed no aplico el parche de TempAllocator" && exit 1)
 	DEPENDS ${JOLT_IDL_FILE}
 	COMMENT "Generating JoltPhysics.js bindings"
 	VERBATIM)
