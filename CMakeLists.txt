@@ -179,11 +179,7 @@ set(EMCC_WASM_ARGS ${EMCC_ARGS}
   -s BINARYEN_IGNORE_IMPLICIT_TRAPS=1
   -s WASM=1)
 
-set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
-  -s SINGLE_FILE=1
-  -s EXPORT_ALL=1)
-
-# Forzar la exportación de las últimas 5 funciones rebeldes
+# Lista de las 5 funciones rebeldes que necesitamos exportar
 set(EXPORTED_FUNCTIONS_LIST
   "_emscripten_bind_NarrowPhaseQuery_CastShape_8"
   "_emscripten_bind_NarrowPhaseQuery_CollidePoint_6"
@@ -191,9 +187,15 @@ set(EXPORTED_FUNCTIONS_LIST
   "_emscripten_bind_BodyInterface_CreateAndAddSoftBody_2"
   "_emscripten_bind_BodyInterface_CreateSoftBody_1"
 )
-foreach(FUNC ${EXPORTED_FUNCTIONS_LIST})
-  list(APPEND EMCC_WASM_COMPAT_ARGS -s EXPORTED_FUNCTIONS=${FUNC})
-endforeach()
+
+# Convertir a formato JSON: ['_func1','_func2',...]
+list(JOIN EXPORTED_FUNCTIONS_LIST "', '" EXPORTED_FUNCTIONS_STR)
+set(EXPORTED_FUNCTIONS_STR "['${EXPORTED_FUNCTIONS_STR}']")
+
+set(EMCC_WASM_COMPAT_ARGS ${EMCC_WASM_ARGS}
+  -s SINGLE_FILE=1
+  -s EXPORT_ALL=1
+  -s EXPORTED_FUNCTIONS=${EXPORTED_FUNCTIONS_STR})
 
 set(EMCC_GLUE_ARGS
   -c
